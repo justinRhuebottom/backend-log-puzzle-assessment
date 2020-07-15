@@ -31,8 +31,9 @@ def read_urls(filename):
     pattern = (r"/\w+/\w+/\w+-\w+-\w+/\w+/\w+/\w+-\w+\b.jpg")
     duplicates = re.findall(pattern, text)
     duplicates.sort()
-    urls = list(dict.fromkeys(duplicates))
-    for index, item in enumerate(urls):
+    short_urls = list(dict.fromkeys(duplicates))
+    urls = []
+    for index, item in enumerate(short_urls):
         urls.insert(index, filename.split("_", 1)[1] + item)
     return urls
 
@@ -45,8 +46,8 @@ def download_images(img_urls, dest_dir):
     to show each local image file.
     Creates the directory if necessary.
     """
-    for url, i in enumerate(img_urls):
-        urllib.request.urlretrieve(url, dest_dir + f"img{i}")
+    # for url, i in enumerate(img_urls):
+    #     urllib.request.urlretrieve(url, dest_dir + f"img{i}")
     pass
 
 
