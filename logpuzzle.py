@@ -28,13 +28,23 @@ def read_urls(filename):
     """
     with open(filename) as f:
         text = f.read()
-    pattern = (r"/\w+/\w+/\w+-\w+-\w+/\w+/\w+/\w+-\w+\b.jpg")
-    duplicates = re.findall(pattern, text)
-    duplicates.sort()
-    short_urls = list(dict.fromkeys(duplicates))
+
+    # Find Puzzle URLs and sort them
+    if filename == "animal_code.google.com":
+        pattern = (r"/\w+/\w+/\w+-\w+-\w+/\w+/\w+/\w+-\w+\b.jpg")
+        duplicates = re.findall(pattern, text)
+        duplicates.sort()
+    if filename == "place_code.google.com":
+        pattern = (r"/\w+/\w+/\w+-\w+-\w+/\w+/\w+/\w+-\w+-\w+\b.jpg")
+        duplicates = re.findall(pattern, text)
+        duplicates.sort(key=lambda x: x[-8:-4])
+
+    # Remove duplicate URLs and give them correct formatting
+    short_urls = []
+    [short_urls.append(x) for x in duplicates if x not in short_urls]
     urls = []
     for index, item in enumerate(short_urls):
-        urls.insert(index, filename.split("_", 1)[1] + item)
+        urls.insert(index, "http://" + filename.split("_", 1)[1] + item)
     return urls
 
 
@@ -46,9 +56,25 @@ def download_images(img_urls, dest_dir):
     to show each local image file.
     Creates the directory if necessary.
     """
-    # for url, i in enumerate(img_urls):
-    #     urllib.request.urlretrieve(url, dest_dir + f"img{i}")
-    pass
+    dest_dir = dest_dir.split(" ")[0]
+    img_tags = []
+
+    # Download each file and write its img tag
+    for i, url in enumerate(img_urls):
+        print("Retrieving... " + url)
+        urllib.request.urlretrieve(url, dest_dir + f"/img{i}")
+        img_tags.append(f"<img src={dest_dir}/img{i}>")
+    img_tags = "".join(img_tags)
+    html_string = f"""
+    <html>
+    <body>
+    {img_tags}
+    </body>
+    </html>
+    """
+    f = open(f"{dest_dir}/index.html", "w")
+    f.write(html_string)
+    f.close()
 
 
 def create_parser():
