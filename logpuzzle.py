@@ -26,8 +26,15 @@ def read_urls(filename):
     extracting the hostname from the filename itself, sorting
     alphabetically in increasing order, and screening out duplicates.
     """
-    # +++your code here+++
-    pass
+    with open(filename) as f:
+        text = f.read()
+    pattern = (r"/\w+/\w+/\w+-\w+-\w+/\w+/\w+/\w+-\w+\b.jpg")
+    duplicates = re.findall(pattern, text)
+    duplicates.sort()
+    urls = list(dict.fromkeys(duplicates))
+    for index, item in enumerate(urls):
+        urls.insert(index, filename.split("_", 1)[1] + item)
+    return urls
 
 
 def download_images(img_urls, dest_dir):
@@ -38,7 +45,8 @@ def download_images(img_urls, dest_dir):
     to show each local image file.
     Creates the directory if necessary.
     """
-    # +++your code here+++
+    for url, i in enumerate(img_urls):
+        urllib.request.urlretrieve(url, dest_dir + f"img{i}")
     pass
 
 
@@ -47,7 +55,8 @@ def create_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument('-d', '--todir',
                         help='destination directory for downloaded images')
-    parser.add_argument('logfile', help='apache logfile to extract urls from')
+    parser.add_argument(
+        'logfile', help='apache logfile to extract urls from')
 
     return parser
 
