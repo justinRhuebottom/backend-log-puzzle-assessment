@@ -57,6 +57,8 @@ def download_images(img_urls, dest_dir):
     Creates the directory if necessary.
     """
     dest_dir = dest_dir.split(" ")[0]
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
     img_tags = []
 
     # Download each file and write its img tag
