@@ -61,11 +61,12 @@ def download_images(img_urls, dest_dir):
         os.makedirs(dest_dir)
     img_tags = []
 
+    absolute_path = os.path.abspath(dest_dir)
     # Download each file and write its img tag
     for i, url in enumerate(img_urls):
         print("Retrieving... " + url)
-        urllib.request.urlretrieve(url, dest_dir + f"/img{i}")
-        img_tags.append(f"<img src={dest_dir}/img{i}>")
+        urllib.request.urlretrieve(url, dest_dir + f"/img{i}.jpg")
+        img_tags.append(f"<img src={absolute_path}/img{i}.jpg>")
     img_tags = "".join(img_tags)
     html_string = f"""
     <html>
@@ -74,9 +75,8 @@ def download_images(img_urls, dest_dir):
     </body>
     </html>
     """
-    f = open(f"{dest_dir}/index.html", "w")
-    f.write(html_string)
-    f.close()
+    with open(f"{dest_dir}/index.html", "w") as f:
+        f.write(html_string)
 
 
 def create_parser():
